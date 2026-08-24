@@ -1,0 +1,17 @@
+services:
+  api:
+    build: ./backend
+    env_file: ./backend/.env
+    ports: ["8000:8000"]
+    depends_on: [postgres,redis,opensearch]
+  postgres:
+    image: postgres:16-alpine
+    environment: {POSTGRES_USER: copart, POSTGRES_PASSWORD: copart, POSTGRES_DB: copart}
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+  redis:
+    image: redis:7-alpine
+  opensearch:
+    image: opensearchproject/opensearch:2.17.1
+    environment: {discovery.type: single-node, plugins.security.disabled: "true", OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"}
+    ports: ["9200:9200"]
+volumes: {postgres_data: {}}
